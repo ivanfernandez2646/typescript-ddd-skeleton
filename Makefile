@@ -1,11 +1,10 @@
-.PHONY = default deps build test start-mooc-backend clean start-database start-backoffice-frontend
+.PHONY = default deps build test start-cms-backend clean start-database
 
 # Shell to use for running scripts
 SHELL := $(shell which bash)
-IMAGE_NAME := codelytv/typescript-ddd-skeleton
+IMAGE_NAME := ivanfernandez2646/typescript-ddd-skeleton
 SERVICE_NAME := app
-MOOC_APP_NAME := mooc
-BACKOFFICE_APP_NAME := backoffice
+MOOC_APP_NAME := cms
 
 # Test if the dependencies we need to run this Makefile are installed
 DOCKER := $(shell command -v docker)
@@ -24,4 +23,20 @@ default: build
 
 # Build image
 build:
-	docker build -t $(IMAGE_NAME):dev .
+	docker build -t $(IMAGE_NAME):dev . --no-cache
+
+# Clean container
+clean:
+	npm run down:docker:local
+
+# Start
+start:
+	docker compose up -d
+	npm run dev
+
+stop:
+	docker compose down
+
+# Run tests
+test: deps start_database
+	npm run test
